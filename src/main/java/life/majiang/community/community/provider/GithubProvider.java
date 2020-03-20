@@ -42,9 +42,13 @@ public class GithubProvider {
                 .build();
 
         try {
-            Response response = client.newCall(request).execute();
+            //经常 偶尔 可以  偶尔不行 出错,原因是什么呢?
+            System.out.println("0");
+            Response response = client.newCall(request).execute();//出错代码
+            System.out.println("1");
             String string = response.body().string();
             GithubUser githubUser = JSON.parseObject(string, GithubUser.class);
+
             return githubUser;
         }catch (IOException e){
 
