@@ -5,6 +5,7 @@ import life.majiang.community.community.dto.GithubUser;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 
 @Component
@@ -25,7 +26,6 @@ public class GithubProvider {
             String string = response.body().string();
             System.out.println(string);
             String  token = string.split("&")[0].split("=")[1];
-            System.out.println(token);
             return  token;
         }catch (Exception e){
             e.printStackTrace();
@@ -42,10 +42,10 @@ public class GithubProvider {
                 .build();
 
         try {
-            //经常 偶尔 可以  偶尔不行 出错,原因是什么呢?
-            System.out.println("0");
-            Response response = client.newCall(request).execute();//出错代码
-            System.out.println("1");
+            System.out.println(request);
+            Response response;//出错代码
+            response = client.newCall(request).execute();//超時 獲取不到數據
+            System.out.println(response);
             String string = response.body().string();
             GithubUser githubUser = JSON.parseObject(string, GithubUser.class);
 

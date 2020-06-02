@@ -3,25 +3,18 @@ package life.majiang.community.community.controller;
 
 import life.majiang.community.community.dto.AcesstokenDTO;
 import life.majiang.community.community.dto.GithubUser;
-
 import life.majiang.community.community.mapper.UserMapper;
 import life.majiang.community.community.model.User;
 import life.majiang.community.community.provider.GithubProvider;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.UUID;
 
 @Controller
@@ -65,7 +58,7 @@ public class AuthorizeController{
 
         System.out.println(githubUser.toString());
 
-        if (githubUser.getName()!=null) {
+        if (githubUser.getName()!=null && githubUser.getId() != null) {
             System.out.println(githubUser.getName());
             System.out.println(githubUser.getBio());
         }else
@@ -75,7 +68,7 @@ public class AuthorizeController{
 
 
 
-        if(githubUser !=null)
+        if(githubUser !=null && githubUser.getId() !=null)
         {
             //登录成功,写cookie 和  session
 
@@ -87,6 +80,7 @@ public class AuthorizeController{
             user.setAccountID(String.valueOf(githubUser.getId()));
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
+            user.setAvatarUrl(githubUser.getAvatar_url());
             userMapper.insert(user);
 
             response.addCookie(new Cookie("token",token));
@@ -94,7 +88,6 @@ public class AuthorizeController{
 
 
             request.getSession().setAttribute("user",githubUser);
-
 
 
             return "redirect:/";
