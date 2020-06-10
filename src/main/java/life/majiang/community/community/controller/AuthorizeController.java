@@ -6,6 +6,7 @@ import life.majiang.community.community.dto.GithubUser;
 import life.majiang.community.community.mapper.UserMapper;
 import life.majiang.community.community.model.User;
 import life.majiang.community.community.provider.GithubProvider;
+import life.majiang.community.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -33,8 +34,9 @@ public class AuthorizeController{
     @Value("${github.redirect.url}")
     private String redirect;
 
-    @Autowired UserMapper userMapper;
 
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
@@ -53,10 +55,12 @@ public class AuthorizeController{
 
         String accesstoken = githubProvider.getAcesstoken(acesstokenDTO);
 
-        System.out.println(accesstoken);
-        GithubUser githubUser =  githubProvider.getUser(accesstoken);
 
-        System.out.println(githubUser.toString());
+        GithubUser githubUser;
+
+        githubUser = githubProvider.getUser(accesstoken);
+
+
 
         if (githubUser.getName()!=null && githubUser.getId() != null) {
             System.out.println(githubUser.getName());
@@ -81,7 +85,9 @@ public class AuthorizeController{
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             user.setAvatarUrl(githubUser.getAvatar_url());
-            userMapper.insert(user);
+
+            userService.createOrUpdate(user);
+
 
             response.addCookie(new Cookie("token",token));
 

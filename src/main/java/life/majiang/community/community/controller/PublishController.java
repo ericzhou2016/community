@@ -53,8 +53,6 @@ public class PublishController {
         model.addAttribute("description",description);
         model.addAttribute("tag",tag);
 
-
-        System.out.println(request);
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
             model.addAttribute("error","用户未登录");
@@ -66,7 +64,7 @@ public class PublishController {
         question.setTitle(title);
         question.setDescription(description);
         question.setTag(tag);
-        question.setCreator(user.getId());
+        question.setCreator(37);
         question.setGmtCreater(System.currentTimeMillis());
         question.setGmtModified(question.getGmtCreater());
 
